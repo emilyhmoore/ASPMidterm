@@ -1,4 +1,4 @@
-fitBMA<-function(x, y, g){
+fitBMA<-function(x, y, g=3){
   library(HapEstXXR) ##Needed for powerset function
   library(plyr) ##Will need for later for parallel stuff
   set<-powerset(1:ncol(x)) ##create a list of all possible combos of variables
@@ -49,16 +49,15 @@ fitBMA<-function(x, y, g){
   ##vector of bmk values for each model
   bmk.vec<-aaply(.data=values,.margins=1,.fun=bmk)
   
-  ##Will need to calculate more to make what I need
+  ##Sum of bmk for each model
+  sum.bmk<-sum(bmk.vec)
   
+  ##Fill in odds for bmk
+  odds.bmk<-NULL
+  for(i in 1:length(bmk.vec)){odds.bmk[i]<-bmk.vec[i]/sum.bmk}
+
   return(list(combo.coef=coefs, 
-  combo.fit=fits, bmk=bmk.vec))
+  combo.fit=fits, bmk=odds.bmk))
 } ##Close function
 
-g=3
-n=100
-pk=3
-r2=.3
-
-bmk(g,n,pk,r2)
-comboreg(covars, dep)
+fitBMA(cbind(covars, rnorm(500,6,7)), dep, g=3)$bmk
