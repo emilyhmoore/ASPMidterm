@@ -85,3 +85,4 @@ fitBMA<-function(x, y, g=3){
 
 
 #fitBMA(cbind(covars, rnorm(500,6,7)), dep, g=3)$bmk
+
