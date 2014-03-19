@@ -29,10 +29,10 @@ fitBMA<-function(x, y, g=3){
   list1<-list(NULL) ##empty list
             
   ##This for() loop creates a list item. Each item is a regression based on 
-  ##the covariate matrix. The powerset deal allows an index if possible values
+  ##the covariate matrix. The powerset deal allows an index of possible values
   
   for (i in 1:length(set)){
-  list1[i]<-list(lm(y~-1+scale(x[,set[[i]]]))) ##all combinations
+  list1[i]<-list(lm(scale(y)~-1+scale(x[,set[[i]]]))) ##all combinations
   }
             
   coefs<-llply(list1, coef) ##extract coefs from the regressions in list
@@ -84,5 +84,24 @@ fitBMA<-function(x, y, g=3){
 } ##Close function
 
 
-#fitBMA(cbind(covars, rnorm(500,6,7)), dep, g=3)$bmk
+thing<-fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
+
+##play code for figuring out next part
+pval<-c(thing$bmk[1], thing$bmk[3])
+bval<-c(thing$combo.coef[[1]], thing$combo.coef[[3]][2])
+exp.b1<-((pval[1]*bval[1])+(pval[2]*bval[2]))*(g/g+1)
+exp.b1
+##trying to find out which items in my list contain the first x variable
+trial<-unlist(thing$combo.coef)
+index<-which(names(trial)=="x1") ##which coefs are for var x1
+trial[index] ##the coef values for each mod containing x1
+
+##Trying to figure out what models in my list contain the first x variable
+trial2<-powerset(1:4) 
+xiny<-function(y,x){x %in% y}
+
+index2<-laply(trial2, .fun=xiny, x=1 ) ##find models contain x1
+index2<-which(index2==TRUE) ##which ones
+
+thing$bmk[index2] ##odds values for models containing x1
 
