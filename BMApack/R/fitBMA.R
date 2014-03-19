@@ -83,4 +83,5 @@ fitBMA<-function(x, y, g=3){
   combo.fit=fits, bmk=odds.bmk))
 } ##Close function
 
-fitBMA(cbind(covars, rnorm(500,6,7)), dep, g=3)$bmk
+
+#fitBMA(cbind(covars, rnorm(500,6,7)), dep, g=3)$bmk

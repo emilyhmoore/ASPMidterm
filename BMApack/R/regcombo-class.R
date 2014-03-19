@@ -46,16 +46,15 @@ setMethod("show", "regcombo",
           }
 )
 
-#' @export
 
-setMethod(f="plot", signature="regcombo",
-          definition=function(x){
-            plot.default(x=(1:length(x@combo.fit)),y=x@combo.fit, 
-                 xlab="Regression Number" , ylab="R-Squared", 
-                 type="o", col="purple", main="R-Squared Over Models Run", pch="*")
-                 abline(h=x@avg.fit, col="red")
-          }
-          )
+#setMethod(f="plot", signature="regcombo",
+ #         definition=function(x){
+            #plot.default(x=(1:length(x@combo.fit)),y=x@combo.fit, 
+              #   xlab="Regression Number" , ylab="R-Squared", 
+               #  type="o", col="purple", main="R-Squared Over Models Run", pch="*")
+                # abline(h=x@avg.fit, col="red")
+          #}
+  #        )
 
 #' @export 
 setGeneric("getcombo.fit",

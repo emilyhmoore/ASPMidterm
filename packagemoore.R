@@ -14,6 +14,6 @@ install(pkg=current.code, local=TRUE)
 
 ##Example data
 
-help(comboreg)
-
+help(fitBMA)
+example(fitBMA)
 

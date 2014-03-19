@@ -1,0 +1,6 @@
+export(fitBMA)
+export(getcombo.fit)
+exportClasses(regcombo)
+exportMethods(getcombo.fit)
+exportMethods(initialize)
+exportMethods(show)
