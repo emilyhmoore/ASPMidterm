@@ -29,11 +29,36 @@ fitBMA<-function(x, y, g){
             
   ##Since lapply makes a list, we unlist to make a vector
   fits<-unlist(fits)
-            
+  
+  ##Create a matrix of the values needed to calculate b|mk:m0| for each model
+  gs<-rep(g, length(set)) ##make a vector of the g value
+  ns<-rep(length(y), length(set)) ##make a vector of the n value
+  pks<-numeric() ##make an empty vector
+  for(i in 1:length(set)){pks[i]<-length(set[[i]])} ##fill in pk values
+  r2s<-fits##r2 values
+  
+  values<-cbind(gs, ns, pks, r2s)##make matrix of these
+  
+  ##function is intended to be used to aaply over the rows of the matrix above
+  bmk<-function(x){
+    bmk<-((1+x[1])^((x[2]-x[3])/2))*((1+x[1]*(1-x[4]))^(-(x[2]-1)/2))
+    names(bmk)<-c("bmk.val")
+    return(bmk)
+  }
+  
+  ##vector of bmk values for each model
+  bmk.vec<-aaply(.data=values,.margins=1,.fun=bmk)
+  
+  ##Will need to calculate more to make what I need
+  
   return(list(combo.coef=coefs, 
-  combo.fit=fits))
+  combo.fit=fits, bmk=bmk.vec))
 } ##Close function
 
+g=3
+n=100
+pk=3
+r2=.3
 
-
+bmk(g,n,pk,r2)
 comboreg(covars, dep)
