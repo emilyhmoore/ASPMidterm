@@ -115,9 +115,11 @@ fitBMA<-function(x, y, g=3){
   exp.val1<-aaply(ptimese, 1, sum) ##Sum across the rows
   
   exp.val<-exp.val1*(g/(g+1)) ##Multiply by g/g+1
-
+  
+  coefprob<-aaply(themods, 1, sum)
+  
   return(list(combo.coef=coefs, 
-  combo.fit=fits, bmk=odds.bmk, exp.vals=exp.val))
+  combo.fit=fits, bmk=odds.bmk, exp.vals=exp.val, coefprobs=coefprob))
 } ##Close function
 
 
