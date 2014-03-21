@@ -129,13 +129,13 @@ fitBMA<-function(x, y, g=3, parallel=FALSE){
 } ##Close function
 
 ##Testing it out
-fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
-colnames(covars)<-c("x1","x2")
-fitBMA(covars, dep)
-data<-matrix(rnorm(10000), ncol=10)
-colnames(data)<-c(paste("x", 1:10, sep=""))
-datay<-data[1,]+5*data[2,]+3*data[3,]+rnorm(1000)
-system.time(fitBMA(data, datay)) 
+#fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
+#colnames(covars)<-c("x1","x2")
+#fitBMA(covars, dep)
+#data<-matrix(rnorm(10000), ncol=10)
+#colnames(data)<-c(paste("x", 1:10, sep=""))
+#datay<-data[1,]+5*data[2,]+3*data[3,]+rnorm(1000)
+#system.time(fitBMA(data, datay)) 
 ##takes about 10-12 seconds to run regressions with 10 variables 
 ##and 1000 observations on my computer without parallel.
 ##I can't make parallel work with my computer, so hopefully it works.

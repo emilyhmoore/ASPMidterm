@@ -17,12 +17,18 @@ setClass(Class="regcombo",
          representation = representation(
            combo.coef = "list",
            combo.fit="numeric",
+           bmk="numeric",
+           exp.vals="numeric",
+           coefprobs="numeric",
            x="matrix",
            y="numeric"
          ),
          prototype = prototype(
            combo.coef=list(),
            combo.fit=numeric(),
+           bmk=numeric(),
+           exp.vals=numeric(),
+           coefprobs=numeric(),
            x = matrix(),
            y = numeric()
          )
@@ -43,6 +49,9 @@ setMethod("show", "regcombo",
             print(object@combo.fit)
             cat("*****Regression Coefficients*****", "\n")
             print(object@combo.coef)
+            print(object@bmk)
+            print(object@exp.vals)
+            print(object@coefprobs)
           }
 )
 

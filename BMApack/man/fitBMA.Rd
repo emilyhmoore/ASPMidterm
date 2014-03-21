@@ -2,21 +2,25 @@
 \alias{fitBMA}
 \title{fitBMA Function}
 \usage{
-fitBMA(x, y, g = 3)
+fitBMA(x, y, g = 3, parallel = FALSE)
 }
 \arguments{
-  \item{x}{A numeric matrix of covariates}
+  \item{x:}{A numeric matrix of covariates}
 
-  \item{y}{A numeric vector of the same length as the
+  \item{y:}{A numeric vector of the same length as the
   number of rows in x.}
 
-  \item{g}{A value for g.}
+  \item{g:}{A value for g.}
+
+  \item{parallel:}{runs in parallel if TRUE}
 }
 \value{
 A list with the elements \item{combo.coef}{A list of
 coefficients from each regression} \item{combo.fit}{Vector
 of R-squared Values} \item{bmk}{Vector of posterior
-probability odds}
+probability odds} \item{exp.vals}{A vector of expected
+coefficient values} \item{coefprobs}{A vector of
+probabilities that the coefficient is non-zero}
 }
 \description{
 Runs regression on all possible combos of covariates and
