@@ -24,7 +24,8 @@
 #' @rdname fitBMA
 #' @export
 
-fitBMA<-function(x, y, g=3, parallel=FALSE){
+setMethod(f="fitBMA",
+          definition=function(x, y, g=3, parallel=FALSE){
   library(HapEstXXR) ##Needed for powerset function
   library(plyr) ##Will need for later for parallel stuff
   
@@ -124,9 +125,10 @@ fitBMA<-function(x, y, g=3, parallel=FALSE){
   coefprob<-aaply(themods, 1, sum, .parallel=parallel)
   names(coefprob)<-colnames(x)
   
-  return(list(combo.coef=coefs, 
-  combo.fit=fits, bmk=odds.bmk, exp.vals=exp.val, coefprobs=coefprob))
-} ##Close function
+  return(new("regcombo", x=x, y=y, combo.coef=coefs, 
+             combo.fit=fits,bmk=odds.bmk, exp.vals=exp.val, coefprobs=coefprob))
+          }#close function definition
+) ##Close method
 
 ##Testing it out
 #fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
@@ -139,5 +141,5 @@ fitBMA<-function(x, y, g=3, parallel=FALSE){
 ##takes about 10-12 seconds to run regressions with 10 variables 
 ##and 1000 observations on my computer without parallel.
 ##I can't make parallel work with my computer, so hopefully it works.
-
+##summary(lm(dep~-1+covars))
 

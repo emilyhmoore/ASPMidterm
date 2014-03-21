@@ -45,12 +45,19 @@ setMethod("initialize", "regcombo",
 #' @export
 setMethod("show", "regcombo",
           function(object){
-            cat("*****Regression Fits*****", "\n")
+            cat("Regression Fits:", "\n")
             print(object@combo.fit)
-            cat("*****Regression Coefficients*****", "\n")
+            cat("\n")
+            cat("Regression Coefficients:", "\n")
             print(object@combo.coef)
+            cat("\n")
+            cat("Posterior Model Odds:", "\n")
             print(object@bmk)
+            cat("\n")
+            cat("Posterior Expected Value of Coefficients:", "\n")
             print(object@exp.vals)
+            cat("\n")
+            cat("Posterior Probability Coefficient is Non-zero:", "\n")
             print(object@coefprobs)
           }
 )
