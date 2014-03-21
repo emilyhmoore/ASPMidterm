@@ -64,35 +64,7 @@ setMethod("show", "regcombo",
           }
 )
 
-setMethod(f="summary", signature="regcombo",
-          definition=function(object){
-            thecoefstrans<-t(object@thecoefs)
-            
-            cat("Coefficient Value Summary", "\n")
-            print(summary(thecoefstrans))
-            cat("\n")
-            
-            cat("Summary of Posterior Model Odds:", "\n")
-            print(summary(object@bmk))
-            cat("\n")
-            
-            cat("Posterior Probability Coefficient is Non-zero:", "\n")
-            print(object@coefprobs)
-            cat("\n")
-            
-            cat("Posterior Expected Value of Coefficients:", "\n")
-            print(object@exp.vals)
-          })
 
-
-#setMethod(f="plot", signature="regcombo",
- #         definition=function(x){
-            #plot.default(x=(1:length(x@combo.fit)),y=x@combo.fit, 
-              #   xlab="Regression Number" , ylab="R-Squared", 
-               #  type="o", col="purple", main="R-Squared Over Models Run", pch="*")
-                # abline(h=x@avg.fit, col="red")
-          #}
-  #        )
 
 
 

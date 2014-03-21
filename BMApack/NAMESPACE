@@ -1,5 +1,6 @@
 export(fitBMA)
 exportClasses(regcombo)
 exportMethods(initialize)
+exportMethods(plot)
 exportMethods(show)
 exportMethods(summary)

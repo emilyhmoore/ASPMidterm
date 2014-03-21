@@ -6,8 +6,6 @@
 \S4method{summary}{regcombo}(object)
 }
 \arguments{
-  \item{object:}{A regcombo class object}
-
   \item{object}{an object for which a summary is desired.}
 }
 \value{
@@ -24,7 +22,8 @@ x1<-rnorm(500)
 x2<-rnorm(500,3,15)
 dep<-(x1+2*x2)+rnorm(500,4,100)
 covars<-cbind(x1,x2)
-summary(fitBMA(x=covars, y=dep))
+trial<-fitBMA(x=covars, y=dep)
+summary(trial)
 }
 \author{
 Emily Moore

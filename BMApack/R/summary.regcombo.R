@@ -2,7 +2,6 @@
 #'
 #' Summarizes regcombo objects as returned by fitBMA
 #'
-#' @param object: A regcombo class object
 #'
 #' @return Prints summaries of coefficients and posterior model odds and returns list 
 #'  \item{exp.vals}{A vector of expected coefficient values}
@@ -14,8 +13,9 @@
 #' x2<-rnorm(500,3,15)
 #' dep<-(x1+2*x2)+rnorm(500,4,100)
 #' covars<-cbind(x1,x2) 
-#' summary(fitBMA(x=covars, y=dep))
-#' @rdname summary.fitBMA
+#' trial<-fitBMA(x=covars, y=dep)
+#' summary(trial)
+#' @rdname summary.regcombo
 #' @export
 #' 
 
