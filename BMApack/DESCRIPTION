@@ -1,6 +1,8 @@
 Package: BMAPack
-Title: Runs regressions on all combinations of covariates, returning covariate values, R2 values, and BMA statistics
-Description: Runs Regressions for all combinations of covariates and returns BMA statistics
+Title: Runs regressions on all combinations of covariates, returning covariate
+    values, R2 values, and BMA statistics
+Description: Runs Regressions for all combinations of covariates and returns
+    BMA statistics
 Version: 0.1
 Author: Emily Moore
 Maintainer: Emily Moore <emily.moore@wustl.edu>

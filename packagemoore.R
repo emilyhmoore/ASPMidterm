@@ -15,9 +15,9 @@ install(pkg=current.code, local=TRUE)
 ##Example data
 
 help(fitBMA)
-help.search('summary,regcombo-method')
+help(summary.regcombo)
+help.search('plot,regcombo-method')
 example(fitBMA)
-example('summary,regcombo-method')
-example('plot,regcombo-method')
-
+example(summary.regcombo)
+example('plot,regcombo-method') ##may take a sec
 
