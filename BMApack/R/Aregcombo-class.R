@@ -19,6 +19,7 @@ setClass(Class="regcombo",
            combo.fit="numeric",
            bmk="numeric",
            exp.vals="numeric",
+           thecoefs="matrix",
            coefprobs="numeric",
            x="matrix",
            y="numeric"
@@ -28,6 +29,7 @@ setClass(Class="regcombo",
            combo.fit=numeric(),
            bmk=numeric(),
            exp.vals=numeric(),
+           thecoefs=matrix(),
            coefprobs=numeric(),
            x = matrix(),
            y = numeric()
@@ -62,6 +64,26 @@ setMethod("show", "regcombo",
           }
 )
 
+setMethod(f="summary", signature="regcombo",
+          definition=function(object){
+            thecoefstrans<-t(object@thecoefs)
+            
+            cat("Coefficient Value Summary", "\n")
+            print(summary(thecoefstrans))
+            cat("\n")
+            
+            cat("Summary of Posterior Model Odds:", "\n")
+            print(summary(object@bmk))
+            cat("\n")
+            
+            cat("Posterior Probability Coefficient is Non-zero:", "\n")
+            print(object@coefprobs)
+            cat("\n")
+            
+            cat("Posterior Expected Value of Coefficients:", "\n")
+            print(object@exp.vals)
+          })
+
 
 #setMethod(f="plot", signature="regcombo",
  #         definition=function(x){
@@ -72,17 +94,5 @@ setMethod("show", "regcombo",
           #}
   #        )
 
-#' @export 
-setGeneric("getcombo.fit",
-           function(object="regcombo")  {
-             standardGeneric("getcombo.fit")
-           }
-)
-#' @export
-setMethod("getcombo.fit", "regcombo",
-          function(object){
-            return(object@combo.fit)
-          }
-)
 
 

@@ -134,7 +134,7 @@ setMethod(f="fitBMA",
   coefprob<-aaply(themods, 1, sum, .parallel=parallel)
   names(coefprob)<-colnames(x)
   
-  return(new("regcombo", x=x, y=y, combo.coef=coefs, 
+  return(new("regcombo", x=x, y=y, thecoefs=thecoefs, combo.coef=coefs, 
              combo.fit=fits,bmk=odds.bmk, exp.vals=exp.val, coefprobs=coefprob))
           }#close function definition
 ) ##Close method
@@ -143,12 +143,16 @@ setMethod(f="fitBMA",
 ##fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
 #colnames(covars)<-c("x1","x2")
 #fitBMA(covars, dep)
-#data<-matrix(rnorm(10000), ncol=10)
+#data<-matrix(rnorm(1000), ncol=10)
 #colnames(data)<-c(paste("x", 1:10, sep=""))
 #datay<-5*data[,2]+3*data[,3]
 
 #thing<-(fitBMA(x=data, y=datay, g=3, parallel=FALSE)) 
-#thing@combo.coef
+#thing@thecoefs
+#c(exp.vals)
+#plot(density(thing@thecoefs[2,]), xlim=c)
+#lines(x=thing@exp.vals[2], col="red")
+#thing@exp.vals[2]
 ##takes about 10-12 seconds to run regressions with 10 variables 
 ##and 1000 observations on my computer without parallel.
 ##I can't make parallel work with my computer, so hopefully it works.
