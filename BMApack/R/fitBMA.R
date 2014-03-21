@@ -89,11 +89,12 @@ thing<-fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), d
 ##play code for figuring out next part
 pval<-c(thing$bmk[1], thing$bmk[3])
 bval<-c(thing$combo.coef[[1]], thing$combo.coef[[3]][2])
-exp.b1<-((pval[1]*bval[1])+(pval[2]*bval[2]))*(g/g+1)
-exp.b1
+sum(pval*bval)*(g/g+1)
+
 ##trying to find out which items in my list contain the first x variable
 trial<-unlist(thing$combo.coef)
 index<-which(names(trial)=="x1") ##which coefs are for var x1
+
 trial[index] ##the coef values for each mod containing x1
 
 ##Trying to figure out what models in my list contain the first x variable
