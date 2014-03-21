@@ -38,11 +38,10 @@ setMethod(f="fitBMA",
             
   ##This for() loop creates a list item. Each item is a regression based on 
   ##the covariate matrix. The powerset deal allows an index of possible values
-  
   for (i in 1:length(set)){
   list1[i]<-list(lm(scale(y)~-1+scale(x[,set[[i]]]))) ##all combinations
   }
-            
+  
   coefs<-llply(list1, coef, .parallel=parallel) ##extract coefs from the regressions in list
             
   ##Sets names of coefs to the appropriate column name
@@ -110,13 +109,17 @@ setMethod(f="fitBMA",
   coefnamer<-function(i){
     coefvec<-unlist(coefs) ##turn list of coefs into a vector.
     coefname<-which(names(coefvec)==colnames(x)[i]) ##Which coefs have a matching name
-    return(coefname)
+    coef1<-coefvec[coefname]
+    return(coef1)
   }
-  
-  thecoefs<-laply(1:ncol(x), coefnamer, .parallel=parallel) ##Apply coefnamer function over the columns of x
+
+  ##Apply coefnamer function over the columns of x
+  thecoefs<-laply(1:ncol(x), coefnamer, .parallel=parallel) 
+  colnames(thecoefs)<-colnames(x)
+  thecoefs<-t(thecoefs)
 
   ptimese<-themods*thecoefs ##Utilize R's practice of element-wise multiplication of matrices
-  
+
   exp.val1<-aaply(ptimese, 1, sum, .parallel=parallel) ##Sum across the rows
   
   exp.val<-exp.val1*(g/(g+1)) ##Multiply by g/g+1
@@ -133,7 +136,7 @@ setMethod(f="fitBMA",
 ##Testing it out
 #fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
 #colnames(covars)<-c("x1","x2")
-#fitBMA(covars, dep)
+fitBMA(covars, dep)
 #data<-matrix(rnorm(10000), ncol=10)
 #colnames(data)<-c(paste("x", 1:10, sep=""))
 #datay<-data[1,]+5*data[2,]+3*data[3,]+rnorm(1000)
@@ -143,3 +146,4 @@ setMethod(f="fitBMA",
 ##I can't make parallel work with my computer, so hopefully it works.
 ##summary(lm(dep~-1+covars))
 
+plot()
