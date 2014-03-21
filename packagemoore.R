@@ -8,9 +8,9 @@ current.code <- as.package("BMAPack")
 load_all(current.code)
 document(current.code)
 
-check(current.code)
-
 install(pkg=current.code, local=TRUE)
+
+check(current.code)
 
 ##Example data
 
