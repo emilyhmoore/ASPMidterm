@@ -24,6 +24,9 @@
 fitBMA<-function(x, y, g=3){
   library(HapEstXXR) ##Needed for powerset function
   library(plyr) ##Will need for later for parallel stuff
+  
+  if(length(unique(colnames(x)))<ncol(x)){stop("Must have unique names for each column")}
+  
   set<-powerset(1:ncol(x)) ##create a list of all possible combos of variables
             
   list1<-list(NULL) ##empty list
@@ -79,34 +82,39 @@ fitBMA<-function(x, y, g=3){
   odds.bmk<-NULL
   for(i in 1:length(bmk.vec)){odds.bmk[i]<-bmk.vec[i]/sum.bmk}
   
+  ##Function which returns x in y since I couldn't find what I was looking for
   xiny<-function(y,x){x %in% y}
   
+  ##Function which determines which sets in the set of models include each variable
   applier<-function(i){
-    index2<-laply(set, xiny, x=i)
-    index2<-which(index2==TRUE)
+    index2<-laply(set, xiny, x=i) ##is it included in this one? True/false
+    index2<-which(index2==TRUE) ##Which ones are true?
     return(index2)
   }
 
+  ##Function which returns the odds of each model including the relevant variable
   theodds<-function(i){
     index3<-laply(1:ncol(x), applier)
     odds.bmk[index3[i,]]
   }
 
+  ##Get the probability values of the mods in question and put them in a matrix
   themods<-laply(1:ncol(x), theodds)
   
+  ##Get the relevant coefs
   coefnamer<-function(i){
-    coefvec<-unlist(coefs)
-    coefname<-which(names(coefvec)==colnames(x)[i])
+    coefvec<-unlist(coefs) ##turn list of coefs into a vector.
+    coefname<-which(names(coefvec)==colnames(x)[i]) ##Which coefs have a matching name
     return(coefname)
   }
   
-  thecoefs<-laply(1:ncol(x), coefnamer)
+  thecoefs<-laply(1:ncol(x), coefnamer) ##Apply coefnamer function over the columns of x
 
-  ptimese<-themods*thecoefs
+  ptimese<-themods*thecoefs ##Utilize R's practice of element-wise multiplication of matrices
   
-  exp.val1<-aaply(ptimese, 1, sum)
+  exp.val1<-aaply(ptimese, 1, sum) ##Sum across the rows
   
-  exp.val<-exp.val1*(g/(g+1))
+  exp.val<-exp.val1*(g/(g+1)) ##Multiply by g/g+1
 
   return(list(combo.coef=coefs, 
   combo.fit=fits, bmk=odds.bmk, exp.vals=exp.val))
@@ -114,5 +122,5 @@ fitBMA<-function(x, y, g=3){
 
 
 fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
-
+colnames(covars)<-c("x1","x2")
 fitBMA(covars, dep)
