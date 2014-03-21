@@ -2,14 +2,17 @@
 #'
 #' Runs regression on all possible combos of covariates and returns coefs, R2, and BMA stats
 #'
-#' @param x A numeric matrix of covariates
-#' @param y A numeric vector of the same length as the number of rows in x.
-#' @param g A value for g. 
+#' @param x: A numeric matrix of covariates
+#' @param y: A numeric vector of the same length as the number of rows in x.
+#' @param g: A value for g. 
+#' @param parallel: runs in parallel if TRUE
 #'
 #' @return A list with the elements
 #'  \item{combo.coef}{A list of coefficients from each regression}
 #'  \item{combo.fit}{Vector of R-squared Values} 
 #'  \item{bmk}{Vector of posterior probability odds}
+#'  \item{exp.vals}{A vector of expected coefficient values}
+#'  \item{coefprobs}{A vector of probabilities that the coefficient is non-zero}
 #' @author Emily Moore
 #' @examples
 #' 
@@ -21,10 +24,11 @@
 #' @rdname fitBMA
 #' @export
 
-fitBMA<-function(x, y, g=3){
+fitBMA<-function(x, y, g=3, parallel=FALSE){
   library(HapEstXXR) ##Needed for powerset function
   library(plyr) ##Will need for later for parallel stuff
   
+  ##Error thrown if non-unque column names.
   if(length(unique(colnames(x)))<ncol(x)){stop("Must have unique names for each column")}
   
   set<-powerset(1:ncol(x)) ##create a list of all possible combos of variables
@@ -38,7 +42,7 @@ fitBMA<-function(x, y, g=3){
   list1[i]<-list(lm(scale(y)~-1+scale(x[,set[[i]]]))) ##all combinations
   }
             
-  coefs<-llply(list1, coef) ##extract coefs from the regressions in list
+  coefs<-llply(list1, coef, .parallel=parallel) ##extract coefs from the regressions in list
             
   ##Sets names of coefs to the appropriate column name
   for (i in 1:length(coefs)){
@@ -51,7 +55,7 @@ fitBMA<-function(x, y, g=3){
   }
             
   ##This gets the r.squared values and puts them in a list
-  fits<-llply(list1, r.sq)
+  fits<-llply(list1, r.sq, .parallel=parallel)
             
   ##Since lapply makes a list, we unlist to make a vector
   fits<-unlist(fits)
@@ -73,7 +77,7 @@ fitBMA<-function(x, y, g=3){
   }
   
   ##vector of bmk values for each model
-  bmk.vec<-aaply(.data=values,.margins=1,.fun=bmk)
+  bmk.vec<-aaply(.data=values,.margins=1,.fun=bmk, .parallel=parallel)
   
   ##Sum of bmk for each model
   sum.bmk<-sum(bmk.vec)
@@ -87,19 +91,19 @@ fitBMA<-function(x, y, g=3){
   
   ##Function which determines which sets in the set of models include each variable
   applier<-function(i){
-    index2<-laply(set, xiny, x=i) ##is it included in this one? True/false
+    index2<-laply(set, xiny, x=i, .parallel=parallel) ##is it included in this one? True/false
     index2<-which(index2==TRUE) ##Which ones are true?
     return(index2)
   }
 
   ##Function which returns the odds of each model including the relevant variable
   theodds<-function(i){
-    index3<-laply(1:ncol(x), applier)
+    index3<-laply(1:ncol(x), applier, .parallel=parallel)
     odds.bmk[index3[i,]]
   }
 
   ##Get the probability values of the mods in question and put them in a matrix
-  themods<-laply(1:ncol(x), theodds)
+  themods<-laply(1:ncol(x), theodds, .parallel=parallel)
   
   ##Get the relevant coefs
   coefnamer<-function(i){
@@ -108,21 +112,32 @@ fitBMA<-function(x, y, g=3){
     return(coefname)
   }
   
-  thecoefs<-laply(1:ncol(x), coefnamer) ##Apply coefnamer function over the columns of x
+  thecoefs<-laply(1:ncol(x), coefnamer, .parallel=parallel) ##Apply coefnamer function over the columns of x
 
   ptimese<-themods*thecoefs ##Utilize R's practice of element-wise multiplication of matrices
   
-  exp.val1<-aaply(ptimese, 1, sum) ##Sum across the rows
+  exp.val1<-aaply(ptimese, 1, sum, .parallel=parallel) ##Sum across the rows
   
   exp.val<-exp.val1*(g/(g+1)) ##Multiply by g/g+1
+  names(exp.val)<-colnames(x)
   
-  coefprob<-aaply(themods, 1, sum)
+  coefprob<-aaply(themods, 1, sum, .parallel=parallel)
+  names(coefprob)<-colnames(x)
   
   return(list(combo.coef=coefs, 
   combo.fit=fits, bmk=odds.bmk, exp.vals=exp.val, coefprobs=coefprob))
 } ##Close function
 
-
+##Testing it out
 fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
 colnames(covars)<-c("x1","x2")
 fitBMA(covars, dep)
+data<-matrix(rnorm(10000), ncol=10)
+colnames(data)<-c(paste("x", 1:10, sep=""))
+datay<-data[1,]+5*data[2,]+3*data[3,]+rnorm(1000)
+system.time(fitBMA(data, datay)) 
+##takes about 10-12 seconds to run regressions with 10 variables 
+##and 1000 observations on my computer without parallel.
+##I can't make parallel work with my computer, so hopefully it works.
+
+
