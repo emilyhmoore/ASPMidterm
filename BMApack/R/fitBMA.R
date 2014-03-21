@@ -7,7 +7,7 @@
 #' @param g: A value for g. 
 #' @param parallel: runs in parallel if TRUE
 #'
-#' @return A list with the elements
+#' @return An S4 class object with following slots: 
 #'  \item{combo.coef}{A list of coefficients from each regression}
 #'  \item{combo.fit}{Vector of R-squared Values} 
 #'  \item{bmk}{Vector of posterior probability odds}
@@ -23,6 +23,11 @@
 #' fitBMA(x=covars, y=dep)
 #' @rdname fitBMA
 #' @export
+
+setGeneric(name="fitBMA",
+           def=function(x, y, g=3, parallel=FALSE, ...)
+           {standardGeneric("fitBMA")}
+)
 
 setMethod(f="fitBMA",
           definition=function(x, y, g=3, parallel=FALSE){
@@ -113,15 +118,16 @@ setMethod(f="fitBMA",
     return(coef1)
   }
 
-  ##Apply coefnamer function over the columns of x
-  thecoefs<-laply(1:ncol(x), coefnamer, .parallel=parallel) 
-  colnames(thecoefs)<-colnames(x)
-  thecoefs<-t(thecoefs)
+##Apply coefnamer function over the columns of x
+  thecoefs<-llply(1:ncol(x), coefnamer, .parallel=parallel) 
+  thecoefs<-unlist(thecoefs)
+  thecoefs<-matrix(thecoefs, nrow=ncol(x), byrow=TRUE)
+  rownames(thecoefs)<-colnames(x)
 
   ptimese<-themods*thecoefs ##Utilize R's practice of element-wise multiplication of matrices
 
   exp.val1<-aaply(ptimese, 1, sum, .parallel=parallel) ##Sum across the rows
-  
+
   exp.val<-exp.val1*(g/(g+1)) ##Multiply by g/g+1
   names(exp.val)<-colnames(x)
   
@@ -134,16 +140,17 @@ setMethod(f="fitBMA",
 ) ##Close method
 
 ##Testing it out
-#fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
+##fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
 #colnames(covars)<-c("x1","x2")
-fitBMA(covars, dep)
+#fitBMA(covars, dep)
 #data<-matrix(rnorm(10000), ncol=10)
 #colnames(data)<-c(paste("x", 1:10, sep=""))
-#datay<-data[1,]+5*data[2,]+3*data[3,]+rnorm(1000)
-#system.time(fitBMA(data, datay)) 
+#datay<-5*data[,2]+3*data[,3]
+
+#thing<-(fitBMA(x=data, y=datay, g=3, parallel=FALSE)) 
+#thing@combo.coef
 ##takes about 10-12 seconds to run regressions with 10 variables 
 ##and 1000 observations on my computer without parallel.
 ##I can't make parallel work with my computer, so hopefully it works.
 ##summary(lm(dep~-1+covars))
 
-plot()
