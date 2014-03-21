@@ -41,7 +41,7 @@ fitBMA<-function(x, y, g=3){
   for (i in 1:length(coefs)){
     names(coefs[[i]])<-colnames(x)[set[[i]]]
   }
-            
+         
   ##This function extracts the r.squared values
   r.sq<-function(x){
     summary(x)$r.squared
@@ -52,7 +52,7 @@ fitBMA<-function(x, y, g=3){
             
   ##Since lapply makes a list, we unlist to make a vector
   fits<-unlist(fits)
-  
+
   ##Create a matrix of the values needed to calculate b|mk:m0| for each model
   gs<-rep(g, length(set)) ##make a vector of the g value
   ns<-rep(length(y), length(set)) ##make a vector of the n value
@@ -79,30 +79,40 @@ fitBMA<-function(x, y, g=3){
   odds.bmk<-NULL
   for(i in 1:length(bmk.vec)){odds.bmk[i]<-bmk.vec[i]/sum.bmk}
   
+  xiny<-function(y,x){x %in% y}
+  
+  applier<-function(i){
+    index2<-laply(set, xiny, x=i)
+    index2<-which(index2==TRUE)
+    return(index2)
+  }
+
+  theodds<-function(i){
+    index3<-laply(1:ncol(x), applier)
+    odds.bmk[index3[i,]]
+  }
+
+  themods<-laply(1:ncol(x), theodds)
+  
+  coefnamer<-function(i){
+    coefvec<-unlist(coefs)
+    coefname<-which(names(coefvec)==colnames(x)[i])
+    return(coefname)
+  }
+  
+  thecoefs<-laply(1:ncol(x), coefnamer)
+
+  ptimese<-themods*thecoefs
+  
+  exp.val1<-aaply(ptimese, 1, sum)
+  
+  exp.val<-exp.val1*(g/(g+1))
+
   return(list(combo.coef=coefs, 
-  combo.fit=fits, bmk=odds.bmk))
+  combo.fit=fits, bmk=odds.bmk, exp.vals=exp.val))
 } ##Close function
 
 
-thing<-fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
+fitBMA(cbind(covars, x3=covars[1]+rnorm(500), x4=covars[2]+rnorm(500)), dep, g=3)
 
-##play code for figuring out next part
-pval<-c(thing$bmk[1], thing$bmk[3])
-bval<-c(thing$combo.coef[[1]], thing$combo.coef[[3]][2])
-sum(pval*bval)*(g/g+1)
-
-##trying to find out which items in my list contain the first x variable
-trial<-unlist(thing$combo.coef)
-index<-which(names(trial)=="x1") ##which coefs are for var x1
-
-trial[index] ##the coef values for each mod containing x1
-
-##Trying to figure out what models in my list contain the first x variable
-trial2<-powerset(1:4) 
-xiny<-function(y,x){x %in% y}
-
-index2<-laply(trial2, .fun=xiny, x=1 ) ##find models contain x1
-index2<-which(index2==TRUE) ##which ones
-
-thing$bmk[index2] ##odds values for models containing x1
-
+fitBMA(covars, dep)
